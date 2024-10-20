@@ -35,19 +35,19 @@ if((HAVE_GIT) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
   project(${REPO_NAME})
 else()
   project("cmake_cpp_msvc_starter_thing")
-  message(WARNING "Project doesn't appear to be a git repo - project
-name defaulted to `cmake_cpp_msvc_starter_thing`")
+  set(REPO_NAME "cmake_cpp_msvc_starter_thing")
+  message(WARNING "Project doesn't appear to be a git repo. Project name defaulted to `cmake_cpp_msvc_starter_thing`")
 endif()
 
 ######################################################################
 # JUSTFILE GEN                                                       #
 ######################################################################
-# set(JUSTFILE_PATH ${CMAKE_SOURCE_DIR}/justfile)
-# if( (FIRST_RUN) AND (NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile) )
-#   message("No justfile at project root: Generating from template")
-#   set(TEMPLATE_JUSTFILE ${CMAKE_SOURCE_DIR}/src/template.justfile)
-#   configure_file(${TEMPLATE_JUSTFILE} ${CMAKE_BINARY_DIR}/build.just @ONLY)
-# endif()
+set(JUSTFILE_PATH ${CMAKE_SOURCE_DIR}/justfile)
+if( (FIRST_RUN) AND (NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile) )
+  message("No justfile at project root: Generating from template")
+  set(TEMPLATE_JUSTFILE ${CMAKE_SOURCE_DIR}/src/template.justfile)
+  configure_file(${TEMPLATE_JUSTFILE} ${CMAKE_BINARY_DIR}/build.just @ONLY)
+endif()
 
 ######################################################################
 # VCPKG                                                              #
@@ -56,8 +56,11 @@ if (WIN32)
   set(VCPKG_CMAKEFILE C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
   if (EXISTS ${VCPKG_CMAKEFILE})
     set(CMAKE_TOOLCHAIN_FILE ${VCPKG_CMAKEFILE})
-    # Dyn. linking is default on Win
-    set(VCPKG_TARGET_TRIPLET "x64-windows-static")
+    # Dyn. linking is default on Win. Define 'LINK_STATIC' or call with
+    # -DLINK_STATIC to link statically instead
+    if(LINK_STATIC)
+      set(VCPKG_TARGET_TRIPLET "x64-windows-static")
+    endif()
   else()
     message(WARNING "Couldn't find vcpkg cmake file")
   endif()
@@ -76,8 +79,10 @@ endif (LINUX)
 
 if (MSVC)
   add_compile_options(/nologo)
-  # Force static linking of C++ runtime
-  # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  # Static linking of C++ runtime
+  if(LINK_STATIC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  endif()
 else()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -99,6 +104,17 @@ file(GLOB SRC
 ######################################################################
 # TARGETS & LINKS                                                    #
 ######################################################################
+if(LINK_STATIC)
+  add_executable(${PROJECT_NAME}-static ${SRC})
+  target_compile_options(${PROJECT_NAME}-static
+    PRIVATE
+    "/W3" "/Zi" "/cgthreads8")
+else()
+  add_executable(${PROJECT_NAME}-dyn ${SRC})
+  target_compile_options(${PROJECT_NAME}-dyn
+    PRIVATE
+    "/W3" "/Zi" "/cgthreads8")
+endif()
 
 ######################################################################
 # TARGET INCLUDES                                                    #
@@ -115,5 +131,3 @@ file(GLOB SRC
 
 # TODO: Conditionalise
 set(OUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build/Debug")
-
-add_executable(${PROJECT_NAME} ${SRC})
