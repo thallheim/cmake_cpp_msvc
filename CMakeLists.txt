@@ -9,14 +9,16 @@ set(CMAKE_CXX_STANDARD 17)
 # Check if initial config has been done already
 if(NOT DEFINED CACHE{FIRST_RUN})
   set(FIRST_RUN TRUE CACHE BOOL "Indicates whether this is the initial (config) CMake run")
-  message(STATUS "FIRST_RUN: ${FIRST_RUN}")
-  # See if we've got git and cache the result
-  find_program(HAVE_GIT git)
+  find_program(HAVE_GIT git)   # See if we've got git and cache the result
+  cmake_host_system_information(RESULT PRETTY_NAME QUERY OS_NAME)
+  # TODO: have these print only if verbose
+  # message(STATUS "FIRST_RUN: ${FIRST_RUN}")
   # message("HAVE_GIT: ${HAVE_GIT}")
+  message(NOTICE "FIRST RUN: Platform: ${PRETTY_NAME}")
+
 else()
   set(FIRST_RUN FALSE)
-  message(NOTICE "FIRST_RUN: ${FIRST_RUN}")
-
+  # message(NOTICE "FIRST_RUN: ${FIRST_RUN}")
 endif()
 
 
@@ -24,6 +26,7 @@ endif()
 # it should be, assuming it was cloned from the template. Only done at
 # first run.
 if((FIRST_RUN) AND (HAVE_GIT) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
+
   set(REPO_NAME "" CACHE STRING "Name of parent repo")
   set(REPO_PATH "" CACHE PATH "Path to parent repo")
   message(NOTICE "Setting project name to match repo")
