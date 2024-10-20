@@ -1,4 +1,4 @@
-# TODO: Hammer justfile template into shape
+# TODO: (Maybe) Conditionalise justfile gen
 # TODO: README.md (maybe also have CM template it on first run?)
 #
 cmake_minimum_required(VERSION 3.30)
@@ -10,21 +10,23 @@ set(CMAKE_CXX_STANDARD 17)
 if(NOT DEFINED CACHE{FIRST_RUN})
   set(FIRST_RUN TRUE CACHE BOOL "Indicates whether this is the initial (config) CMake run")
   message(STATUS "FIRST_RUN: ${FIRST_RUN}")
-  # See if we've got git
-  set(HAVE_GIT FALSE CACHE BOOL "Indicates whether git is available")
+  # See if we've got git and cache the result
   find_program(HAVE_GIT git)
+  # message("HAVE_GIT: ${HAVE_GIT}")
 else()
   set(FIRST_RUN FALSE)
   message(NOTICE "FIRST_RUN: ${FIRST_RUN}")
+
 endif()
 
 
-# Set project name to match git repo name, if present, which
-# it should be, assuming it was cloned from the template.
-if((HAVE_GIT) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
+# Set project name to match git repo name, if the project is one, which
+# it should be, assuming it was cloned from the template. Only done at
+# first run.
+if((FIRST_RUN) AND (HAVE_GIT) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
   set(REPO_NAME "" CACHE STRING "Name of parent repo")
   set(REPO_PATH "" CACHE PATH "Path to parent repo")
-  message(NOTICE "Setting project name set to match repo")
+  message(NOTICE "Setting project name to match repo")
   execute_process(
     COMMAND git rev-parse --show-toplevel
     OUTPUT_VARIABLE REPO_PATH
@@ -33,7 +35,10 @@ if((HAVE_GIT) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
   get_filename_component(REPO_NAME ${REPO_PATH} NAME)
   set(REPO_NAME ${REPO_NAME} CACHE STRING "Name of parent repo")
   project(${REPO_NAME})
-else()
+endif()
+
+# Set project name to a default value if no repo found.
+if((FIRST_RUN) AND (NOT EXISTS "${CMAKE_SOURCE_DIR}/.git"))
   project("cmake_cpp_msvc_starter_thing")
   set(REPO_NAME "cmake_cpp_msvc_starter_thing")
   message(WARNING "Project doesn't appear to be a git repo. Project name defaulted to `cmake_cpp_msvc_starter_thing`")
