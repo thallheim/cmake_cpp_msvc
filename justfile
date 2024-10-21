@@ -5,7 +5,7 @@ import? 'build/build.just'
 [no-exit-message]
 _default:
     @just _fuzzy-list
-    
+
 # List available recipes, with fzf previews
 [no-exit-message]
 @_fuzzy-list:
@@ -33,6 +33,26 @@ alias cs := configure-static
     echo "CMake: Configuring project..."
     echo "============================================"
     cmake -DLINK_STATIC=TRUE -B build -S .
+
+alias cr := configure-release
+# Run CMake project config (release, dynamically linked)
+@configure-release:
+    if ! which cmake > /dev/null 2>&1; then \
+    echo "FATAL: CMake not installed." && exit 1; fi
+    echo "============================================"
+    echo "CMake: Configuring project..."
+    echo "============================================"
+    cmake -DBUILD_TYPE=Release -DLINK_STATIC=FALSE -B build -S .
+
+alias crs := configure-release-static
+# Run CMake project config (release, statically linked)
+@configure-release-static:
+    if ! which cmake > /dev/null 2>&1; then \
+    echo "FATAL: CMake not installed." && exit 1; fi
+    echo "============================================"
+    echo "CMake: Configuring project..."
+    echo "============================================"
+    cmake -DBUILD_TYPE=Release -DLINK_STATIC=TRUE -B build -S .
 
 alias purge := purge-build-artefacts
 [confirm('Confirm purge all build artefacts?')]

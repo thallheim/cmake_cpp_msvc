@@ -16,16 +16,29 @@ alias b := build
 
 alias r := run-dyn
 alias rd := run-dyn
-# Run the thing (dyn. linked)
+# Run the thing (debug, dyn. linked)
 [windows]
 @run-dyn: build
     ./build/Debug/{{bin_name_dyn}}.exe
 
+alias rr := run-release-dyn
+alias rrd := run-release-dyn
+# Run the thing (release, dyn. linked)
+[windows]
+@run-release-dyn: build
+    ./build/Release/{{bin_name_dyn}}.exe
+
 alias rs := run-static
-# Run the thing (Statically Linked Edition)
+# Run the thing (debug, Statically Linked Edition)
 [windows]
 @run-static: build
     ./build/Debug/{{bin_name_static}}.exe
+
+alias rrs := run-release-static
+# Run the thing (release, Statically Linked Edition)
+[windows]
+@run-release-static: build
+    ./build/Release/{{bin_name_static}}.exe
 
 # Just do it (configure -> build -> run (static))
 [windows]
