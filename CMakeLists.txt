@@ -22,8 +22,38 @@ else()
 endif()
 
 
+# VCPKG TOOLCHAIN
+################################################################################
+if (WIN32)
+  set(VCPKG_CMAKEFILE C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
+  if (EXISTS ${VCPKG_CMAKEFILE})
+    set(CMAKE_TOOLCHAIN_FILE ${VCPKG_CMAKEFILE})
+    # Dyn. linking is default on Win.
+    if(LINK_STATIC)
+      set(VCPKG_TARGET_TRIPLET "x64-windows-static")
+    endif()
+  else()
+    message(WARNING "Couldn't find vcpkg cmake file at `${VCPKG_CMAKEFILE}`.
+        Specify its path manually or disable vcpkg integration.")
+  endif()
+endif (WIN32)
+
+if (LINUX)
+  set(VCPKG_CMAKEFILE_LINUX "$ENV{HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake")
+  if(EXISTS ${VCPKG_CMAKEFILE_LINUX})
+    set(CMAKE_TOOLCHAIN_FILE ${VCPKG_CMAKEFILE_LINUX})
+  elseif()
+    set(CMAKE_TOOLCHAIN_FILE /usr/local/vcpkg/scripts/buildsystems/vcpkg.cmake)
+  else()
+    message(WARNING "Couldn't find vcpkg cmake file at `${VCPKG_CMAKEFILE}`.
+        Specify its path manually or disable vcpkg integration.")
+  endif()
+endif (LINUX)
+
+
 # BUILD TYPE SHENANIGANS
 ################################################################################
+# TODO: Maybe keep these code paths in case they're useful for make/nmake
 # Cache build type from env (-DBUILD_TYPE). Defaults to debug build
 # if undefined.
 set(BUILD_TYPE ENV${BUILD_TYPE} CACHE STRING "Currently selected build type.")
@@ -33,7 +63,7 @@ if(NOT $ENV{BUILD_TYPE})
   set(BUILD_TYPE "Debug")
 endif()
 
-message(NOTICE "Build type set: $CACHE{BUILD_TYPE}")
+# message(NOTICE "Build type set: $CACHE{BUILD_TYPE}")
 
 # Supported build types
 # set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported build types" FORCE)
@@ -74,34 +104,6 @@ if( (FIRST_RUN) AND (NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile) )
   set(TEMPLATE_JUSTFILE ${CMAKE_SOURCE_DIR}/src/template.justfile)
   configure_file(${TEMPLATE_JUSTFILE} ${CMAKE_BINARY_DIR}/build.just @ONLY)
 endif()
-
-
-# VCPKG TOOLCHAIN
-################################################################################
-if (WIN32)
-  set(VCPKG_CMAKEFILE C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
-  if (EXISTS ${VCPKG_CMAKEFILE})
-    set(CMAKE_TOOLCHAIN_FILE ${VCPKG_CMAKEFILE})
-    # Dyn. linking is default on Win. Define 'LINK_STATIC' or call with
-    # -DLINK_STATIC to link statically instead
-    if(LINK_STATIC)
-      set(VCPKG_TARGET_TRIPLET "x64-windows-static")
-    endif()
-  else()
-    message(WARNING "Couldn't find vcpkg cmake file")
-  endif()
-endif (WIN32)
-
-if (LINUX)
-  set(VCPKG_CMAKEFILE_LINUX "$ENV{HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake")
-  if(EXISTS ${VCPKG_CMAKEFILE_LINUX})
-    set(CMAKE_TOOLCHAIN_FILE ${VCPKG_CMAKEFILE_LINUX})
-  elseif()
-    set(CMAKE_TOOLCHAIN_FILE /usr/local/vcpkg/scripts/buildsystems/vcpkg.cmake)
-  else()
-    message(WARNING "Couldn't find vcpkg cmake file")
-  endif()
-endif (LINUX)
 
 
 # COMPILER FLAGS
