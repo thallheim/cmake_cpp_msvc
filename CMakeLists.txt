@@ -1,5 +1,6 @@
 # TODO: (Maybe) Conditionalise justfile gen
 # TODO: README.md (maybe also have CM template it on first run?)
+# TODO: Dedup compile options
 #
 cmake_minimum_required(VERSION 3.30)
 # Gen. compile_commands.json (no effect with msvc)
@@ -109,7 +110,7 @@ endif()
 # COMPILER FLAGS
 ################################################################################
 if (MSVC)
-  add_compile_options(/nologo)
+  add_compile_options(/nologo /cgthreads8)
   # Static linking of C++ runtime
   if(LINK_STATIC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -146,15 +147,14 @@ if(LINK_STATIC)
     target_compile_options(${PROJECT_NAME}-static
       PRIVATE
       "/W3" "/cgthreads8")
-    set(OUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build/Release")
   endif()
-else()
+endif()
+if((NOT LINK_STATIC) OR (NOT DEFINED LINK_STATIC))
   add_executable(${PROJECT_NAME}-dyn ${SRC})
   if(BUILD_TYPE STREQUAL "Debug")
     target_compile_options(${PROJECT_NAME}-dyn
       PRIVATE
       "/W3" "/Zi" "/cgthreads8")
-    set(OUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build/Debug")
   elseif(BUILD_TYPE STREQUAL "Release")
     target_compile_options(${PROJECT_NAME}-dyn
       PRIVATE
