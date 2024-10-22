@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 
 # FIRST-RUN CHECK
-######################################################################
+################################################################################
 if(NOT DEFINED CACHE{FIRST_RUN})
   set(FIRST_RUN TRUE CACHE BOOL "Indicates whether this is the initial (config) CMake run")
   find_program(HAVE_GIT git)   # See if we've got git and cache the result
@@ -23,7 +23,7 @@ endif()
 
 
 # BUILD TYPE SHENANIGANS
-######################################################################
+################################################################################
 # Cache build type from env (-DBUILD_TYPE). Defaults to debug build
 # if undefined.
 set(BUILD_TYPE ENV${BUILD_TYPE} CACHE STRING "Currently selected build type.")
@@ -37,14 +37,14 @@ message(NOTICE "Build type set: $CACHE{BUILD_TYPE}")
 
 # Supported build types
 # set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported build types" FORCE)
-# set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported build types")
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported build types")
 
 
 # PROJECT NAME
-######################################################################
-# Set project name to match git repo name, if the project is one, which
-# it should be, assuming it was cloned from the template. Only done at
-# first run. Default used if no repo was found.
+################################################################################
+# Set project name to match git repo name, if the project is one (it should be,
+# if it was cloned from the template). Only done at first run. Sets a default
+# name if no repo was found.
 if((FIRST_RUN) AND (HAVE_GIT) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
   set(REPO_NAME "" CACHE STRING "Name of parent repo")
   set(REPO_PATH "" CACHE PATH "Path to parent repo")
@@ -67,7 +67,7 @@ endif()
 
 
 # JUSTFILE GEN
-######################################################################
+################################################################################
 set(JUSTFILE_PATH ${CMAKE_SOURCE_DIR}/justfile)
 if( (FIRST_RUN) AND (NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile) )
   message("No justfile at project root: Generating from template")
@@ -76,8 +76,8 @@ if( (FIRST_RUN) AND (NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile) )
 endif()
 
 
-# VCPKG
-######################################################################
+# VCPKG TOOLCHAIN
+################################################################################
 if (WIN32)
   set(VCPKG_CMAKEFILE C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
   if (EXISTS ${VCPKG_CMAKEFILE})
@@ -92,9 +92,6 @@ if (WIN32)
   endif()
 endif (WIN32)
 
-
-# COMPILER FLAGS
-######################################################################
 if (LINUX)
   set(VCPKG_CMAKEFILE_LINUX "$ENV{HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake")
   if(EXISTS ${VCPKG_CMAKEFILE_LINUX})
@@ -106,6 +103,9 @@ if (LINUX)
   endif()
 endif (LINUX)
 
+
+# COMPILER FLAGS
+################################################################################
 if (MSVC)
   add_compile_options(/nologo)
   # Static linking of C++ runtime
@@ -118,12 +118,12 @@ endif()
 
 
 # EXTERNAL LIBS/CONTENT
-######################################################################
+################################################################################
 
 
 
 # SOURCE GLOBS
-######################################################################
+################################################################################
 set(SRC)
 file(GLOB SRC
   src/*.h src/*.hpp
@@ -132,7 +132,7 @@ file(GLOB SRC
 
 
 # TARGETS & LINKS
-######################################################################
+################################################################################
 if(LINK_STATIC)
   add_executable(${PROJECT_NAME}-static ${SRC})
   if(BUILD_TYPE STREQUAL "Debug")
@@ -163,7 +163,7 @@ endif()
 
 
 # TARGET INCLUDES
-######################################################################
+################################################################################
 # find_package(fmt CONFIG REQUIRED)
 
 # target_link_libraries(SDL3_msvc_template-dyn
