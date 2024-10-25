@@ -1,6 +1,5 @@
 # TODO: (Maybe) Conditionalise justfile gen
 # TODO: README.md (maybe also have CM template it on first run?)
-# TODO: Dedup compile options
 #
 cmake_minimum_required(VERSION 3.30)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Generate compile_commands.json (no effect with msvc)
@@ -16,6 +15,7 @@ set(REPO_PATH "" CACHE PATH "Path to parent repo")
 # VCPKG TOOLCHAIN
 ################################################################################
 option(USE_VCPKG "Enable/disable the vcpkg toolchain. Defaults to ON" ON)
+# --- WINDOWS
 if((WIN32) AND (USE_VCPKG))
   set(VCPKG_CMAKEFILE C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
   if(EXISTS ${VCPKG_CMAKEFILE})
@@ -31,6 +31,7 @@ if((WIN32) AND (USE_VCPKG))
   endif()
 endif()
 
+# --- LINUX
 if((LINUX) AND (USE_VCPKG))
   set(VCPKG_CMAKEFILE_LINUX "$ENV{HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake")
   if(EXISTS ${VCPKG_CMAKEFILE_LINUX})
