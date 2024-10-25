@@ -3,32 +3,24 @@
 # TODO: Dedup compile options
 #
 cmake_minimum_required(VERSION 3.30)
-# Gen. compile_commands.json (no effect with msvc)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Generate compile_commands.json (no effect with msvc)
 set(CMAKE_CXX_STANDARD 17)
 
-# FIRST-RUN CHECK
+
+# CACHERY
 ################################################################################
-if(NOT DEFINED CACHE{FIRST_RUN})
-  set(FIRST_RUN TRUE CACHE BOOL "Indicates whether this is the initial (config) CMake run")
-  find_program(HAVE_GIT git)   # See if we've got git and cache the result
-  cmake_host_system_information(RESULT PRETTY_NAME QUERY OS_NAME)
-  # TODO: have these print only if verbose
-  # message(STATUS "FIRST_RUN: ${FIRST_RUN}")
-  # message("HAVE_GIT: ${HAVE_GIT}")
-  # message(NOTICE "FIRST RUN: Platform: ${PRETTY_NAME}")
-else()
-  set(FIRST_RUN FALSE)
-  # message(NOTICE "FIRST_RUN: ${FIRST_RUN}")
-endif()
+set(REPO_NAME "" CACHE STRING "Name of parent repo")
+set(REPO_PATH "" CACHE PATH "Path to parent repo")
 
 
 # VCPKG TOOLCHAIN
 ################################################################################
-if (WIN32)
+option(USE_VCPKG "Enable/disable the vcpkg toolchain. Defaults to ON" ON)
+if((WIN32) AND (USE_VCPKG))
   set(VCPKG_CMAKEFILE C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
-  if (EXISTS ${VCPKG_CMAKEFILE})
+  if(EXISTS ${VCPKG_CMAKEFILE})
     set(CMAKE_TOOLCHAIN_FILE ${VCPKG_CMAKEFILE})
+    message(DEBUG "Found vcpkg toolchain file.")
     # Dyn. linking is default on Win.
     if(LINK_STATIC)
       set(VCPKG_TARGET_TRIPLET "x64-windows-static")
@@ -37,38 +29,21 @@ if (WIN32)
     message(WARNING "Couldn't find vcpkg cmake file at `${VCPKG_CMAKEFILE}`.
         Specify its path manually or disable vcpkg integration.")
   endif()
-endif (WIN32)
+endif()
 
-if (LINUX)
+if((LINUX) AND (USE_VCPKG))
   set(VCPKG_CMAKEFILE_LINUX "$ENV{HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake")
   if(EXISTS ${VCPKG_CMAKEFILE_LINUX})
     set(CMAKE_TOOLCHAIN_FILE ${VCPKG_CMAKEFILE_LINUX})
+    message(DEBUG "Found vcpkg toolchain file from `/home` root.")
   elseif()
     set(CMAKE_TOOLCHAIN_FILE /usr/local/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    message(DEBUG "No toolchain file under home path. Trying `/usr/local`.")
   else()
     message(WARNING "Couldn't find vcpkg cmake file at `${VCPKG_CMAKEFILE}`.
         Specify its path manually or disable vcpkg integration.")
   endif()
-endif (LINUX)
-
-
-# BUILD TYPE SHENANIGANS
-################################################################################
-# TODO: Maybe keep these code paths in case they're useful for make/nmake
-# Cache build type from env (-DBUILD_TYPE). Defaults to debug build
-# if undefined.
-set(BUILD_TYPE ENV${BUILD_TYPE} CACHE STRING "Currently selected build type.")
-if(NOT $ENV{BUILD_TYPE})
-  # TODO: only output if verbose(?)
-  message(WARNING "BUILD_TYPE undefined: defaulting to DEBUG build")
-  set(BUILD_TYPE "Debug")
 endif()
-
-# message(NOTICE "Build type set: $CACHE{BUILD_TYPE}")
-
-# Supported build types
-# set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported build types" FORCE)
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported build types")
 
 
 # PROJECT NAME
@@ -76,9 +51,9 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported build type
 # Set project name to match git repo name, if the project is one (it should be,
 # if it was cloned from the template). Only done at first run. Sets a default
 # name if no repo was found.
-if((FIRST_RUN) AND (HAVE_GIT) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
-  set(REPO_NAME "" CACHE STRING "Name of parent repo")
-  set(REPO_PATH "" CACHE PATH "Path to parent repo")
+# set(REPO_NAME "" CACHE STRING "Name of parent repo")
+# set(REPO_PATH "" CACHE PATH "Path to parent repo")
+if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
   message(NOTICE "Setting project name to match repo")
   execute_process(
     COMMAND git rev-parse --show-toplevel
@@ -88,36 +63,54 @@ if((FIRST_RUN) AND (HAVE_GIT) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
   get_filename_component(REPO_NAME ${REPO_PATH} NAME)
   set(REPO_NAME ${REPO_NAME} CACHE STRING "Name of parent repo")
   project(${REPO_NAME})
-endif()
-
-if((FIRST_RUN) AND (NOT EXISTS "${CMAKE_SOURCE_DIR}/.git"))
+elseif(NOT EXISTS "${CMAKE_SOURCE_DIR}/.git")
   project("cmake_cpp_msvc_starter_thing")
   set(REPO_NAME "cmake_cpp_msvc_starter_thing")
-  message(WARNING "Project doesn't appear to be a git repo. Project name defaulted to `cmake_cpp_msvc_starter_thing`")
+  message(NOTICE "Project doesn't appear to be a git repo.
+    Project name defaulted to `cmake_cpp_msvc_starter_thing`")
+else()
+  message(AUTHOR_WARNING "NO GIT OR NOT A REPO")
 endif()
 
 
 # JUSTFILE GEN
 ################################################################################
+# The result is written to `build.just` to avoid having to touch the root
+# justfile, which instead just includes `build.just` after config. This has a
+# bonus UX benefit in not showing the build-stage recipes prior to actually
+# configuring the build system.
+################################################################################
 set(JUSTFILE_PATH ${CMAKE_SOURCE_DIR}/justfile)
-if( (FIRST_RUN) AND (NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile) )
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile)
   message("No justfile at project root: Generating from template")
   set(TEMPLATE_JUSTFILE ${CMAKE_SOURCE_DIR}/src/template.justfile)
   configure_file(${TEMPLATE_JUSTFILE} ${CMAKE_BINARY_DIR}/build.just @ONLY)
 endif()
 
 
-# COMPILER FLAGS
+
+# BUILD OPTS
 ################################################################################
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Supported build types")
+
+
+# LINK OPTS
+################################################################################
+# Defaults to dynamic lib & runtime linking. This is MSVC default behaviour,
+# but is explicitly set here for clarity.
+# option(BUILD_SHARED_LIBS "Build libs as shared (DLLs)." ON)
+option(LINK_STATIC, "Links project statically if ON. Default: OFF")
+option(LINK_STATIC_CRT, "Links C++ runtime statically if ON. Default: OFF")
+
 if (MSVC)
-  add_compile_options(/nologo /cgthreads8)
-  # Static linking of C++ runtime
-  if(LINK_STATIC)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  if(LINK_STATIC_CRT)
+    # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
+  else()
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
   endif()
-else()
-    add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
+
 
 
 # EXTERNAL LIBS/CONTENT
@@ -134,33 +127,28 @@ file(GLOB SRC
 )
 
 
-# TARGETS & LINKS
+# TARGETS
 ################################################################################
-if(LINK_STATIC)
-  add_executable(${PROJECT_NAME}-static ${SRC})
-  if(BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(${PROJECT_NAME}-static
-      PRIVATE
-      "/W3" "/Zi" "/cgthreads8")
-    set(OUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build/Debug")
-  elseif(BUILD_TYPE STREQUAL "Release")
-    target_compile_options(${PROJECT_NAME}-static
-      PRIVATE
-      "/W3" "/cgthreads8")
-  endif()
+# TODO: Gen expr?
+add_executable(${REPO_NAME} ${SRC})
+
+
+# COMPILATION OPTS
+################################################################################
+if (MSVC)
+  # target_compile_options(${PROJECT_NAME} PUBLIC
+  target_compile_options(${REPO_NAME} PUBLIC
+    "$<$<CONFIG:Debug>:/nologo;/cgthreads8;/W4>"
+    "$<$<CONFIG:Release>:/nologo;/cgthreads8;/W4>"
+  )
 endif()
-if((NOT LINK_STATIC) OR (NOT DEFINED LINK_STATIC))
-  add_executable(${PROJECT_NAME}-dyn ${SRC})
-  if(BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(${PROJECT_NAME}-dyn
-      PRIVATE
-      "/W3" "/Zi" "/cgthreads8")
-  elseif(BUILD_TYPE STREQUAL "Release")
-    target_compile_options(${PROJECT_NAME}-dyn
-      PRIVATE
-      "/W3" "/cgthreads8")
-    set(OUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build/Release")
-  endif()
+
+if (LINUX)
+  # target_compile_options(${PROJECT_NAME} PUBLIC
+  target_compile_options(${REPO_NAME} PUBLIC
+    "$<$<CONFIG:Debug>:-j8;-Wall;-Wextra>"
+    "$<$<CONFIG:Release>:-j8;-Wall;-Wextra>"
+  )
 endif()
 
 
@@ -176,4 +164,6 @@ endif()
 #   ${CMAKE_DL_LIBS}
 # )
 
-# TODO: Conditionalise
+
+# MISC.
+################################################################################

@@ -1,4 +1,5 @@
 bin_root          := "@REPO_NAME@"
+proj_name         := "@PROJECT_NAME@"
 dyn_suffix        := "-dyn"
 static_suffix     := "-static"
 bin_name_dyn      := bin_root + dyn_suffix
@@ -32,14 +33,26 @@ alias br := build-release
 
 
 
-alias r := run-dyn
+
+alias r := run
+# Run the thing
+[windows]
+@run:
+    ./build/Debug/{{bin_root}}.exe
+
+alias rr := run-release
+# Run the thing
+[windows]
+@run-release:
+    ./build/Release/{{bin_root}}.exe
+
+
 alias rd := run-dyn
 # Run the thing (debug, dyn. linked)
 [windows]
 @run-dyn:
     ./build/Debug/{{bin_name_dyn}}.exe
 
-alias rr := run-release-dyn
 alias rrd := run-release-dyn
 # Run the thing (release, dyn. linked)
 [windows]

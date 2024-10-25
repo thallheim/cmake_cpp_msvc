@@ -22,17 +22,17 @@ alias c := configure
     echo "============================================"
     echo "CMake: Configuring project..."
     echo "============================================"
-    cmake -DLINK_STATIC=FALSE -B build -S .
+    cmake -B build -S .
 
 alias cs := configure-static
-# Run CMake project config (debug, statically linked)
+# Run CMake project config (debug, statically linked, incl. CRT)
 @configure-static:
     if ! which cmake > /dev/null 2>&1; then \
     echo "FATAL: CMake not installed." && exit 1; fi
     echo "============================================"
     echo "CMake: Configuring project..."
     echo "============================================"
-    cmake -DLINK_STATIC=TRUE -B build -S .
+    cmake -DLINK_STATIC=ON -DLINK_STATIC_CRT=ON -B build -S .
 
 alias purge := purge-build-artefacts
 [confirm('Confirm purge all build artefacts?')]
