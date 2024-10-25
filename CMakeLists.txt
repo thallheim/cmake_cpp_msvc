@@ -1,5 +1,6 @@
 # TODO: (Maybe) Conditionalise justfile gen
 # TODO: README.md (maybe also have CM template it on first run?)
+# TODO: Opts and things for Linux build
 #
 cmake_minimum_required(VERSION 3.30)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Generate compile_commands.json (no effect with msvc)
