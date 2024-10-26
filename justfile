@@ -1,4 +1,5 @@
-set windows-shell := ["C:\\Program Files\\Git\\bin\\sh.exe","-c"]
+# set windows-shell := ["C:\\Program Files\\Git\\bin\\sh.exe","-c"]
+set windows-shell := ["powershell.exe","-c"]
 
 import? 'build/build.just'
 
