@@ -28,19 +28,16 @@ alias br := build-release
 
 alias r := run
 # Run the thing
-[windows]
 @run: 
     ./build/Debug/{{bin_root}}.exe
 
 alias rr := run-release
 # Run the thing
-[windows]
 @run-release:
     ./build/Release/{{bin_root}}.exe
 
 
 # Just do it (configure (static links) -> build -> run)
-[windows]
 @go: configure-static build run
     ./build/Debug/{{bin_name_static}}.exe
 
