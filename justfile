@@ -1,5 +1,5 @@
 # set windows-shell := ["C:\\Program Files\\Git\\bin\\sh.exe","-c"]
-set windows-shell := ["powershell.exe","-c"]
+set windows-shell := ["pwsh.exe","-NoLogo","-Command"]
 
 import? 'build/build.just'
 
@@ -14,6 +14,7 @@ _default:
     echo "FATAL: fzf not installed." && exit 1; fi
     just --choose --chooser "fzf --no-multi --preview 'just --show {1}' --height=16 --border=rounded"    
 
+# ----------------------- LINUX -----------------------
 
 alias c := configure
 # Run CMake project config (debug, dynamically linked)
