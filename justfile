@@ -19,26 +19,26 @@ alias c := configure
 @configure:
     if ! which cmake > /dev/null 2>&1; then \
     echo "FATAL: CMake not installed." && exit 1; fi
-    echo "============================================"
-    echo "CMake: Configuring project..."
-    echo "============================================"
-    cmake -B build -S .
+    echo "============================================================"
+    echo "CMake: Configuring project [dyn. libs; do not link CRT]"
+    echo "============================================================"
+    cmake -DLINK_STATIC=OFF -DLINK_STATIC_CRT=OFF -B build -S .
 
 alias cs := configure-static
 # Run CMake project config (debug, statically linked, incl. CRT)
 @configure-static:
     if ! which cmake > /dev/null 2>&1; then \
     echo "FATAL: CMake not installed." && exit 1; fi
-    echo "============================================"
-    echo "CMake: Configuring project..."
-    echo "============================================"
+    echo "============================================================"
+    echo "CMake: Configuring project [static libs; link CRT]"
+    echo "============================================================"
     cmake -DLINK_STATIC=ON -DLINK_STATIC_CRT=ON -B build -S .
 
 alias purge := purge-build-artefacts
 [confirm('Confirm purge all build artefacts?')]
 @purge-build-artefacts:
-    echo "============================================"
+    echo "============================================================"
     echo "Purging all build artefacts..."
-    echo "============================================"
+    echo "============================================================"
     rm -rf ./build/
     rm -rf ./src/extern/*

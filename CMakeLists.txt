@@ -84,11 +84,10 @@ endif()
 ################################################################################
 set(JUSTFILE_PATH ${CMAKE_SOURCE_DIR}/justfile)
 if(NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile)
-  message("No justfile at project root: Generating from template")
+  message("Generating build-justfile from template")
   set(TEMPLATE_JUSTFILE ${CMAKE_SOURCE_DIR}/src/template.justfile)
   configure_file(${TEMPLATE_JUSTFILE} ${CMAKE_BINARY_DIR}/build.just @ONLY)
 endif()
-
 
 
 # BUILD OPTS
@@ -105,19 +104,22 @@ option(LINK_STATIC, "Links project statically if ON. Default: OFF")
 option(LINK_STATIC_CRT, "Links C++ runtime statically if ON. Default: OFF")
 
 if (MSVC)
+  # CRT
   if(LINK_STATIC_CRT)
     # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
   else()
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
   endif()
+  if(LINK_STATIC)
+    set(BUILD_SHARED_LIBS ON)
+    message(NOTICE "LINKING STATICALLY")
+  endif()
 endif()
-
 
 
 # EXTERNAL LIBS/CONTENT
 ################################################################################
-
 
 
 # SOURCE GLOBS

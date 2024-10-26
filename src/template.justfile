@@ -10,34 +10,26 @@ alias b := build
 @build:
     if ! which cmake > /dev/null 2>&1; then \
     echo "FATAL: CMake not installed." && exit 1; fi
-    echo "============================================"
-    echo "CMake: Building project..."
-    echo "============================================"
-    # cmake -Wdev -Wdeprecated --build build --config "Debug"
+    echo "============================================================"
+    echo "CMake: Building project... [Config: Debug]"
+    echo "============================================================"
     cmake --build build --config "Debug"
 
 alias br := build-release
-# Build project
+# Build project (release configuration)
 @build-release:
     if ! which cmake > /dev/null 2>&1; then \
     echo "FATAL: CMake not installed." && exit 1; fi
-    echo "============================================"
-    echo "CMake: Building project..."
-    echo "============================================"
+    echo "============================================================"
+    echo "CMake: Building project... [Config: Release]"
+    echo "============================================================"
     cmake --build build --config "Release"
-
-
-
-
-
-
-
 
 
 alias r := run
 # Run the thing
 [windows]
-@run:
+@run: 
     ./build/Debug/{{bin_root}}.exe
 
 alias rr := run-release
@@ -47,33 +39,9 @@ alias rr := run-release
     ./build/Release/{{bin_root}}.exe
 
 
-alias rd := run-dyn
-# Run the thing (debug, dyn. linked)
+# Just do it (configure (static links) -> build -> run)
 [windows]
-@run-dyn:
-    ./build/Debug/{{bin_name_dyn}}.exe
-
-alias rrd := run-release-dyn
-# Run the thing (release, dyn. linked)
-[windows]
-@run-release-dyn:
-    ./build/Release/{{bin_name_dyn}}.exe
-
-alias rs := run-static
-# Run the thing (debug, Statically Linked Edition)
-[windows]
-@run-static:
-    ./build/Debug/{{bin_name_static}}.exe
-
-alias rrs := run-release-static
-# Run the thing (release, Statically Linked Edition)
-[windows]
-@run-release-static:
-    ./build/Release/{{bin_name_static}}.exe
-
-# Just do it (configure -> build -> run (static))
-[windows]
-@go: configure-static build run-static
+@go: configure-static build run
     ./build/Debug/{{bin_name_static}}.exe
 
 # Display available recipes on stdout
