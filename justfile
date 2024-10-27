@@ -1,13 +1,24 @@
 # set windows-shell := ["C:\\Program Files\\Git\\bin\\sh.exe","-c"]
+set unstable
 set windows-shell := ["pwsh.exe","-NoLogo","-Command"]
 OS := os()
 
+
+if "{{OS}}" = "linux" {
+import? 'src/template_config_linux.just'
+} else if "{{OS}}" = "wimdows" {
+import? 'src/template_config_linux.just'
+}
 import? 'build/build.just'
 
 
 [no-exit-message]
 _default:
     @just _fuzzy-list
+
+
+@try:
+    echo "YAS"
 
 # List available recipes, with fzf previews
 [no-exit-message]
@@ -17,14 +28,7 @@ _default:
     just --choose --chooser "fzf --no-multi --preview 'just --show {1}' --height=16 --border=rounded"    
 
 # -------------------- Config loader --------------------
-config:
-    @if [[ "{{OS}}" == "linux" ]]; then \
-        just --justfile src/template_config_linux.just; \
-    elif [[ "{{OS}}" == "windows" ]]; then \
-        just --justfile src/template_config_windows.just; \
-    else \
-        echo "Unsupported OS: {{OS}}" && exit 1; \
-    fi
+
 # -------------------------------------------------------
 
 # alias c := configure
