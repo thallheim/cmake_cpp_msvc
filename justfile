@@ -9,7 +9,6 @@ import? '@CONFIG_TEMPLATE@'
 _default:
     @just _fuzzy-list
 
-
 @configure-just:
     echo "YAS"
     cmake -P "configure_justfile.cmake"
