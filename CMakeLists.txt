@@ -1,8 +1,7 @@
-# TODO: (Maybe) Conditionalise justfile gen
-# TODO: README.md (maybe also have CM template it on first run?)
+# TODO: README.md
 # TODO: Opts and things for Linux build
 #
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.25)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Generate compile_commands.json (no effect with msvc)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -77,15 +76,19 @@ endif()
 
 # JUSTFILE GEN
 ################################################################################
-# The result is written to `build.just` to avoid having to touch the root
-# justfile, which instead just includes `build.just` after config. This has a
-# bonus UX benefit in not showing the build-stage recipes prior to actually
-# configuring the build system.
-################################################################################
+# Most recipes are configured by CMake through templating. This to avoid having
+# to touch the root justfile after initial config, in case user adds recipes.
+# This has the bonus UX benefit of not showing the build-stage recipes prior to
+# actually configuring the build system.
+
 set(JUSTFILE_PATH ${CMAKE_SOURCE_DIR}/justfile)
 if(NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile)
+  if (WIN32)
+    set(TEMPLATE_JUSTFILE ${CMAKE_SOURCE_DIR}/src/template_windows.justfile)
+  elseif ((LINUX) OR (UNIX))
+    set(TEMPLATE_JUSTFILE ${CMAKE_SOURCE_DIR}/src/template_linux.justfile)
+  endif()
   message("Generating build-justfile from template")
-  set(TEMPLATE_JUSTFILE ${CMAKE_SOURCE_DIR}/src/template.justfile)
   configure_file(${TEMPLATE_JUSTFILE} ${CMAKE_BINARY_DIR}/build.just @ONLY)
 endif()
 

@@ -25,24 +25,19 @@ alias br := build-release
     echo "============================================================"
     cmake --build build --config "Release"
 
-
 alias r := run
 # Run the thing
-[windows]
 @run: 
-    ./build/Debug/{{bin_root}}.exe
+    ./build/{{bin_root}}
 
 alias rr := run-release
 # Run the thing
-[windows]
 @run-release:
-    ./build/Release/{{bin_root}}.exe
-
+    ./build/Release/{{bin_root}}
 
 # Just do it (configure (static links) -> build -> run)
-[windows]
-@go: configure-static build run
-    ./build/Debug/{{bin_name_static}}.exe
+@go: configure build run
+    ./build/Debug/{{bin_root}}
 
 # Display available recipes on stdout
 list:
