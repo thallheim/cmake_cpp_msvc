@@ -77,10 +77,11 @@ endif()
 
 # JUSTFILE GEN
 ################################################################################
-# The result is written to `build.just` to avoid having to touch the root
-# justfile, which includes a `build.just` for the host platform.
-# This has a bonus UX benefit in not showing the build-stage recipes prior to
+# Most recipes are configured by CMake through templating. This to avoid having
+# to touch the root justfile after initial config, in case user adds recipes.
+# This has the bonus UX benefit of not showing the build-stage recipes prior to
 # actually configuring the build system.
+
 set(JUSTFILE_PATH ${CMAKE_SOURCE_DIR}/justfile)
 # TODO: Platform check, then configure linux/windows build justfile
 if(NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile)
