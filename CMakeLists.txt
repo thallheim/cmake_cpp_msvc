@@ -1,5 +1,4 @@
-# TODO: (Maybe) Conditionalise justfile gen
-# TODO: README.md (maybe also have CM template it on first run?)
+# TODO: README.md
 # TODO: Opts and things for Linux build
 #
 cmake_minimum_required(VERSION 3.25)
@@ -83,7 +82,6 @@ endif()
 # actually configuring the build system.
 
 set(JUSTFILE_PATH ${CMAKE_SOURCE_DIR}/justfile)
-# TODO: Platform check, then configure linux/windows build justfile
 if(NOT EXISTS ${CMAKE_BINARY_DIR}/build.justfile)
   if (WIN32)
     set(TEMPLATE_JUSTFILE ${CMAKE_SOURCE_DIR}/src/template_windows.justfile)
