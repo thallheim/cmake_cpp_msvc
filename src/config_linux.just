@@ -15,11 +15,8 @@ _default:
 @_fuzzy-list:
     if ! which fzf > /dev/null 2>&1; then \
     echo "FATAL: fzf not installed." && exit 1; fi
-    just --choose --chooser "fzf --no-multi --preview 'just --show {1}' --height=16 --border=rounded"    
-
-
-import? '@CONFIG_TEMPLATE@'
-
+    just --choose --chooser "fzf --no-multi --preview 'just --show {1}' --height=16 --border=rounded"
+    
 
 alias c := configure
 # Run CMake project config (debug, dynamically linked)

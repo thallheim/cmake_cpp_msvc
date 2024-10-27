@@ -1,5 +1,3 @@
-CONFIG_TEMPLATE := "${CMAKE_SOURCE_DIR}/src/template_config_windows.just"
-
 alias c := configure
 # Run CMake project config (debug, dynamically linked)
 @configure:
