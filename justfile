@@ -3,13 +3,8 @@ set unstable
 set windows-shell := ["pwsh.exe","-NoLogo","-Command"]
 OS := os()
 
-
-if "{{OS}}" = "linux" {
-import? 'src/template_config_linux.just'
-} else if "{{OS}}" = "wimdows" {
-import? 'src/template_config_linux.just'
-}
 import? 'build/build.just'
+import? '@CONFIG_TEMPLATE@'
 
 
 [no-exit-message]
