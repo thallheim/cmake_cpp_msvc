@@ -14,7 +14,6 @@ _default:
 
 [no-exit-message]
 @configure-just:
-    echo "YAS"
     cmake -P "configure_justfile.cmake"
     
 # List available recipes, with fzf previews

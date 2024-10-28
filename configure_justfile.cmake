@@ -8,8 +8,8 @@ file(READ ${JUSTFILE_PATH} JUSTFILE_CONTENT)
 
 string(REPLACE "@CONFIG_IMPORT_STMNT@" "${CONFIG_IMPORT_STMNT}" JUSTFILE_CONTENT "${JUSTFILE_CONTENT}")
 # Comment out the `configure-just` recipe to hide it after first run
-string(REPLACE "[no-exit-message]\n@configure-just:\n    echo \"YAS\"\n    cmake -P \"configure_justfile.cmake\"\n"
-  "#[no-exit-message]\n#@configure-just:\n#   echo \"YAS\"\n#   cmake -P \"configure_justfile.cmake\"\n"
+string(REPLACE "[no-exit-message]\n@configure-just:\n    cmake -P \"configure_justfile.cmake\"\n"
+  "#[no-exit-message]\n#@configure-just:\n#   cmake -P \"configure_justfile.cmake\"\n"
   JUSTFILE_CONTENT "${JUSTFILE_CONTENT}")
 # Switch default recipe from `config-just` to `_fuzzy-list`
 string(REPLACE "[no-exit-message]\n_default:\n    @just configure-just\n"
