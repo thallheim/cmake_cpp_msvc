@@ -1,4 +1,5 @@
-set windows-shell := ["pwsh.exe","-NoLogo","-Command"]
+#set windows-shell := ["pwsh.exe","-NoLogo","-Command"]
+set windows-shell := ["C:\\Program Files\\Git\\bin\\sh.exe","-c"]
 OS := os()
 
 #BUILD_IMPORT_STMT#
