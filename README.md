@@ -4,6 +4,9 @@ A personal time saver.
 
 # TODO
 
+- [ ] Write something to gather upp TODOs from sources into one place
+- [ ] Move just-related files into subdir(s).
+- [ ] Try putting Windows logic into a separate pwsh-script and calling that from just
 
 ## justfile(s?)
 
@@ -12,12 +15,7 @@ A personal time saver.
     recipe for resetting the justfile(s)?
 
 
-## Misc.
-
-- [ ] Write something to gather upp TODOs from sources into one place
-- [ ] Move just-related files into subdir(s).
-
-### Windows slowdowns
+## Windows slowdowns
 _Later - switching back to Git bash under Win will do for now._
 
 Doesn't seem to be the files at issue. To check:
