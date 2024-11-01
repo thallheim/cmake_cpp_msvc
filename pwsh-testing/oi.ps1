@@ -1,6 +1,19 @@
 $nl        = "`r`n" # Because backticking on my kb layout is ass
 $pipeInput = ($input | Out-String).Trim() # Stringify any piped input
-$argsInput =  $args
+$argsInput = $args
+
+
+function check_cmd ($command) {
+    $found = $false
+    $found = (Get-Command -type application -name $command -ErrorAction SilentlyContinue)
+    if ($found) {
+        return $found
+        exit 0
+    } else {
+        Write-Host "FATAL: NOT_FOUND: ${command}"
+        exit 1
+    }
+}
 
 
 function check_args {
@@ -18,9 +31,9 @@ $argsOk = $false
 
 
 # Check for piped input (take precedence if arg also provided)
-$pipedInput = if (-not [string]::IsNullOrEmpty($pipeInput)) {
+$inputIsPipe = if (-not [string]::IsNullOrEmpty($pipeInput)) {
     $argsOk = check_args
-    Write-Information -msg "pipedInput = ${pipedInput}"
+    Write-Information -msg "inputIsPipe = ${inputIsPipe}"
     $true
 } else {
     $argsOk = check_args
@@ -32,18 +45,19 @@ $pipedInput = if (-not [string]::IsNullOrEmpty($pipeInput)) {
 
 # Ensure EITHER piped or arg input; error if both are provided
 # if ($argsInput.Count -gt 0 -and -not [string]::IsNullOrEmpty($pipeInput)) {
-if ($argsOk -and $pipedInput) {
+if ($argsOk -and $inputIsPipe) {
     Write-Error "Can't handle simultaneous pipe and arg input."
     exit 1
 }
 
 
 if ($argsOk) {
-    Write-Error "OH NOES ARGS"
-    exit 1
+    check_cmd($argsInput)
+    Write-Host "Hmmmmmm"
+    exit 0
 }
 
-if ($pipedInput) {
-    Write-Error "OH NOES PIPE"
-    exit 1
+if ($inputIsPipe) {
+    check_cmd($pipeInput)
+    exit 0
 }
