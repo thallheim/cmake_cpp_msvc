@@ -1,5 +1,3 @@
-# TODO: powershellify cmake check
-
 alias c := configure
 # Run CMake project config (debug, dynamically linked)
 @configure:
