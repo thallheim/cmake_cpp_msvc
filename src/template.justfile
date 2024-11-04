@@ -42,3 +42,6 @@ alias rr := run-release
 # Display available recipes on stdout
 list:
     @just --list
+
+reset-justfile:
+    cp -fv ./build/unconfigured.just ./justfile
