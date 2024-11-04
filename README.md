@@ -7,17 +7,12 @@ A personal time saver.
 # TODO
 
 - [ ] Write something to gather upp TODOs from sources into one place
-- [ ] Reorganise/unclutter config stuff
-  - [ ] Move just-related files into subdir(s).
-  - [ ] Same for the CMake scripts
 - [ ] Try putting Windows logic into a separate pwsh-script and calling that from just
 
 ## justfile(s?)
 
 - [ ] Clean up unused vars
-- [x] cp the virgin justfile pre-config so it can be reset from a cmake script/just
-  - Exclude from any contexts?
-
+- [ ] Proper fzf guards
 
 ## Windows slowdowns
 _Later - switching back to Git bash under Win will do for now._
