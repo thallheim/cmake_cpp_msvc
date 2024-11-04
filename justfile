@@ -21,3 +21,6 @@ _default:
     # echo "FATAL: fzf not installed." && exit 1; fi
     just --choose --chooser "fzf --no-multi --preview 'just --show {1}' --height=16 --border=rounded"    
 
+# Reset root justfile to its unconfigured state
+#reset-justfile:
+#    cp -fv ./build/unconfigured.just ./justfile

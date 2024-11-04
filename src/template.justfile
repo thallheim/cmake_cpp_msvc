@@ -43,5 +43,5 @@ alias rr := run-release
 list:
     @just --list
 
-reset-justfile:
-    cp -fv ./build/unconfigured.just ./justfile
+# reset-justfile:
+#     cp -fv ./build/unconfigured.just ./justfile

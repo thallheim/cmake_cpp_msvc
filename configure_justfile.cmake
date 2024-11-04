@@ -19,5 +19,10 @@ string(REPLACE "[no-exit-message]\n@configure-just:\n    cmake -P \"backup_uncon
 string(REPLACE "[no-exit-message]\n_default:\n    @just configure-just\n"
   "[no-exit-message]\n_default:\n    @just _fuzzy-list\n"
   JUSTFILE_CONTENT "${JUSTFILE_CONTENT}")
+# Enable justfile reset recipe
+string(REPLACE "#reset-justfile:\n#    cp -fv ./build/unconfigured.just ./justfile\n"
+  "reset-justfile:\n    cp -fv ./build/unconfigured.just ./justfile\n"
+  JUSTFILE_CONTENT "${JUSTFILE_CONTENT}")
+
 
 file(WRITE ${JUSTFILE_PATH} "${JUSTFILE_CONTENT}")
