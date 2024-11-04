@@ -12,8 +12,8 @@ string(REPLACE "#BUILD_IMPORT_STMT#"
   "import? 'build/build.just'"
   JUSTFILE_CONTENT "${JUSTFILE_CONTENT}")
 # Comment out the `configure-just` recipe to hide it after first run
-string(REPLACE "[no-exit-message]\n@configure-just:\n    cmake -P \"backup_unconfigured_justfile.cmake\n    cmake -P \"configure_justfile.cmake\"\n"
-  "#[no-exit-message]\n#@configure-just:\n#   cmake -P \"backup_unconfigured_justfile.cmake\n#    cmake -P \"configure_justfile.cmake\"\n"
+string(REPLACE "[no-exit-message]\n@configure-just:\n    cmake -P \"backup_unconfigured_justfile.cmake\"\n    cmake -P \"configure_justfile.cmake\"\n"
+  "#[no-exit-message]\n#@configure-just:\n#   cmake -P \"backup_unconfigured_justfile.cmake\"\n#    cmake -P \"configure_justfile.cmake\"\n"
   JUSTFILE_CONTENT "${JUSTFILE_CONTENT}")
 # Switch default recipe from `config-just` to `_fuzzy-list`
 string(REPLACE "[no-exit-message]\n_default:\n    @just configure-just\n"
