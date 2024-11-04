@@ -2,19 +2,21 @@
 
 A personal time saver.
 
+---
+
 # TODO
 
-- [x] cp the virgin justfile pre-config so it can be reset from a cmake script/just
-  - Exclude from any contexts?
 - [ ] Write something to gather upp TODOs from sources into one place
-- [ ] Move just-related files into subdir(s).
+- [ ] Reorganise/unclutter config stuff
+  - [ ] Move just-related files into subdir(s).
+  - [ ] Same for the CMake scripts
 - [ ] Try putting Windows logic into a separate pwsh-script and calling that from just
 
 ## justfile(s?)
 
 - [ ] Clean up unused vars
-- [ ] Should the OG justfile be templated as well, so I can have a
-    recipe for resetting the justfile(s)?
+- [x] cp the virgin justfile pre-config so it can be reset from a cmake script/just
+  - Exclude from any contexts?
 
 
 ## Windows slowdowns
