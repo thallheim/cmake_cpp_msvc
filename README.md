@@ -4,6 +4,8 @@ A personal time saver.
 
 # TODO
 
+- [x] cp the virgin justfile pre-config so it can be reset from a cmake script/just
+  - Exclude from any contexts?
 - [ ] Write something to gather upp TODOs from sources into one place
 - [ ] Move just-related files into subdir(s).
 - [ ] Try putting Windows logic into a separate pwsh-script and calling that from just
