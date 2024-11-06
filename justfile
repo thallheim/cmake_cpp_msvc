@@ -11,8 +11,8 @@ _default:
 
 [no-exit-message]
 @configure-just:
-    cmake -P "backup_unconfigured_justfile.cmake"
-    cmake -P "configure_justfile.cmake"
+    cmake -P ".support_scripts/backup_unconfigured_justfile.cmake"
+    cmake -P ".support_scripts/configure_justfile.cmake"
     
 # List available recipes, with fzf previews
 [no-exit-message]
