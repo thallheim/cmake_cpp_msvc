@@ -12,6 +12,7 @@ A personal time saver.
 
 ## justfile(s?)
 
+- [ ] config import: file should probably be templated and moved into build tree, like the build justfile
 - [ ] Clean up unused vars
 - [ ] Proper fzf guards
 - [x] Make sure cmake only backs up "raw" justfile if it doesn't already exist (or it will be overwritten by the configured one)
