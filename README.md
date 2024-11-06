@@ -6,6 +6,7 @@ A personal time saver.
 
 # TODO
 
+* [ ] Generalise template so it's (at least mostly) language-agnostic?
 - [ ] Write something to gather upp TODOs from sources into one place
 - [ ] Try putting Windows logic into a separate pwsh-script and calling that from just
 
