@@ -11,9 +11,9 @@ A personal time saver.
 
 ## justfile(s?)
 
-- [ ] Make sure cmake only backs up "raw" justfile if it doesn't already exist (or it will be overwritten by the configured one)
 - [ ] Clean up unused vars
 - [ ] Proper fzf guards
+- [x] Make sure cmake only backs up "raw" justfile if it doesn't already exist (or it will be overwritten by the configured one)
 
 ## Windows slowdowns
 _Later - switching back to Git bash under Win will do for now._
