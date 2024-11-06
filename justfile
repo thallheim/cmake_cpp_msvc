@@ -2,8 +2,22 @@
 set windows-shell := ["C:\\Program Files\\Git\\bin\\sh.exe","-c"]
 OS := os()
 
-#BUILD_IMPORT_STMT#
+
+# IMPORT STATEMENTS -- DO NOT MODIFY
+# ¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
+# Justfile recipes aren't cross-platform. A CMake string-replace is
+# therefore used to write platform-specific import paths in place of
+# the lines below. See `configure_justfile.cmake` in the
+# `.support_scripts` dir for details.
+#
+# After the first run CMake will not touch this justfile, so
+# recipes or imports can safely be added to it.
+
+#BUILD_IMPORT_STMNT#
 #CONFIG_IMPORT_STMNT#
+
+# ¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
+
 
 [no-exit-message]
 _default:
