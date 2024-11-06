@@ -8,7 +8,7 @@ file(READ ${JUSTFILE_PATH} JUSTFILE_CONTENT)
 
 string(REPLACE "#CONFIG_IMPORT_STMNT#" "${CONFIG_IMPORT_STMNT}" JUSTFILE_CONTENT "${JUSTFILE_CONTENT}")
 # Write the build justfile's import statement
-string(REPLACE "#BUILD_IMPORT_STMT#"
+string(REPLACE "#BUILD_IMPORT_STMNT#"
   "import? 'build/build.just'"
   JUSTFILE_CONTENT "${JUSTFILE_CONTENT}")
 # Comment out the `configure-just` recipe to hide it after first run
